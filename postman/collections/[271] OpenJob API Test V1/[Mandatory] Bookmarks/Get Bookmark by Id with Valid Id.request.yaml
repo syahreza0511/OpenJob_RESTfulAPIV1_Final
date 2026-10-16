@@ -1,0 +1,20 @@
+$kind: http-request
+url: http://localhost:{{port}}/jobs/{{jobId}}/bookmark/{{bookmarkId}}
+method: GET
+headers:
+  Authorization: Bearer {{accessToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 200 status code', () => {
+          pm.expect(pm.response).to.have.status(200);
+      });
+
+      pm.test('response body should have correct property and value', () => {
+          const responseJson = pm.response.json();
+          const bookmarkId = pm.environment.get('bookmarkId');
+          pm.expect(responseJson.status).to.equal('success');
+          pm.expect(responseJson.data.id).to.equal(bookmarkId);
+      });
+    language: text/javascript
+order: 8000

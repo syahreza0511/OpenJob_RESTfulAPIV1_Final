@@ -1,0 +1,47 @@
+$kind: http-request
+url: http://localhost:{{port}}/categories
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: "{{currentBadCategoryPayload}}"
+scripts:
+  - type: beforeRequest
+    code: |-
+      let badCategoryPayloads = pm.environment.get('badCategoryPayloads');
+
+      if (!badCategoryPayloads || badCategoryPayloads.length === 0) {
+          badCategoryPayloads = [
+              {},
+              { name: 123 },
+              { name: '' }
+          ]
+      }
+
+      const currentBadCategoryPayload = badCategoryPayloads.shift();
+      pm.environment.set('currentBadCategoryPayload', JSON.stringify(currentBadCategoryPayload));
+      pm.environment.set('badCategoryPayloads', badCategoryPayloads);
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 400 status code', () => {
+          pm.expect(pm.response).to.have.status(400);
+      });
+
+      pm.test('response body should have correct property and value', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson.status).to.equal('failed');
+          pm.expect(responseJson.message).to.be.a('string');
+      });
+
+      const repeatRequestUntilDatasetEmpty = () => {
+          const badCategoryPayloads = pm.environment.get('badCategoryPayloads');
+          if(badCategoryPayloads && badCategoryPayloads.length > 0) {
+              postman.setNextRequest('Add Category with Invalid Payload');
+          }
+      };
+
+      repeatRequestUntilDatasetEmpty();
+    language: text/javascript
+order: 4000

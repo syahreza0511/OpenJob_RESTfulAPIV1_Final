@@ -1,0 +1,17 @@
+$kind: http-request
+url: http://localhost:{{port}}/users
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \    \"name\": \"John Doe\",\r
+
+    \    \"email\": \"john@example.com\",\r
+
+    \    \"password\": \"password123\",\r
+
+    \    \"role\": \"user\"\r
+
+    }"
+order: 1000

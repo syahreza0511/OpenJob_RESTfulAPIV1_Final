@@ -1,0 +1,20 @@
+$kind: http-request
+url: http://localhost:{{port}}/companies
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: |-
+    {
+        "name": "Tech Corp",
+        "location": "Jakarta",
+        "description": "Test company for jobs"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const responseJson = pm.response.json();
+      pm.environment.set('jobCompanyId', responseJson.data.id);
+    language: text/javascript
+order: 1000

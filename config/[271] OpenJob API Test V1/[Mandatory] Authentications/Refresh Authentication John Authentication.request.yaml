@@ -1,0 +1,53 @@
+$kind: http-request
+url: http://localhost:{{port}}/authentications
+method: PUT
+body:
+  type: json
+  content: "{\r
+
+    \    \"refreshToken\": \"{{refreshTokenJohn}}\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test('it should response 200 status code', () => {\r
+
+      \    pm.expect(pm.response).to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test('response Content-Type header should have application/json value', () => {\r
+
+      \    pm.expect(pm.response.headers.get('Content-Type')).to.includes('application/json');\r
+
+      }); \r
+
+      \r
+
+      pm.test('response body should an object', () => {\r
+
+      \    const responseJson = pm.response.json();\r
+
+      \    pm.expect(responseJson).to.be.an('object');\r
+
+      });\r
+
+      \r
+
+      pm.test('response body have correct property and value', () => {\r
+
+      \    const responseJson = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(responseJson.status).to.equal('success');\r
+
+      \    pm.expect(responseJson.data).to.be.an('object');\r
+
+      \    pm.expect(responseJson.data.accessToken).to.be.a('string');\r
+
+      });"
+    language: text/javascript
+order: 11000

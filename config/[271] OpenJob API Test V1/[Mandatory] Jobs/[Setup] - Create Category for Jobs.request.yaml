@@ -1,0 +1,18 @@
+$kind: http-request
+url: http://localhost:{{port}}/categories
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: |-
+    {
+        "name": "Backend Developer"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const responseJson = pm.response.json();
+      pm.environment.set('jobCategoryId', responseJson.data.id);
+    language: text/javascript
+order: 2000

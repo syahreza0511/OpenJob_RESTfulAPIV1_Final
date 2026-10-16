@@ -1,0 +1,28 @@
+$kind: http-request
+url: http://localhost:{{port}}/applications
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: |-
+    {
+        "user_id": "{{userId}}",
+        "job_id": "{{applicationJobId}}",
+        "status": "pending"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 201 status code', () => {
+          pm.expect(pm.response).to.have.status(201);
+      });
+
+      pm.test('response body should have correct property and value', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson.status).to.equal('success');
+          pm.expect(responseJson.data.id).to.be.a('string');
+          pm.environment.set('applicationId', responseJson.data.id);
+      });
+    language: text/javascript
+order: 5000

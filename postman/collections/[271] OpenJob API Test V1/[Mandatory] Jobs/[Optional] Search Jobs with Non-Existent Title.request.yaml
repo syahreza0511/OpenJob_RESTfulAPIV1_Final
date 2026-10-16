@@ -1,0 +1,33 @@
+$kind: http-request
+url: http://localhost:{{port}}/jobs?title=NonExistentJobTitle12345
+method: GET
+queryParams:
+  title: NonExistentJobTitle12345
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 200 status code', () => {
+          pm.expect(pm.response).to.have.status(200);
+      });
+
+      pm.test('response Content-Type header should have application/json value', () => {
+          pm.expect(pm.response.headers.get('Content-Type')).to.includes('application/json');
+      });
+
+      pm.test('response body should be an object', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson).to.be.an('object');
+      });
+
+      pm.test('response body should have correct property and value', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson.status).to.equal('success');
+          pm.expect(responseJson.data.jobs).to.be.an('array');
+      });
+
+      pm.test('should return empty array for non-existent search', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson.data.jobs).to.have.lengthOf(0);
+      });
+    language: text/javascript
+order: 12000

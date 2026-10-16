@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://localhost:{{port}}/categories/xxx
+method: DELETE
+headers:
+  Authorization: Bearer {{accessToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 404 status code', () => {
+          pm.expect(pm.response).to.have.status(404);
+      });
+    language: text/javascript
+order: 7000

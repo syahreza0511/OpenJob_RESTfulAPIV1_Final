@@ -1,0 +1,42 @@
+$kind: http-request
+url: http://localhost:{{port}}/jobs?title=Developer&company-name=Tech
+method: GET
+queryParams:
+  title: Developer
+  company-name: Tech
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 200 status code', () => {
+          pm.expect(pm.response).to.have.status(200);
+      });
+
+      pm.test('response Content-Type header should have application/json value', () => {
+          pm.expect(pm.response.headers.get('Content-Type')).to.includes('application/json');
+      });
+
+      pm.test('response body should be an object', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson).to.be.an('object');
+      });
+
+      pm.test('response body should have correct property and value', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson.status).to.equal('success');
+          pm.expect(responseJson.data.jobs).to.be.an('array');
+      });
+
+      pm.test('all returned jobs should match both title and company criteria', () => {
+          const responseJson = pm.response.json();
+          const searchTitle = 'Developer';
+          const searchCompany = 'Tech';
+          
+          if (responseJson.data.jobs.length > 0) {
+              responseJson.data.jobs.forEach(job => {
+                  pm.expect(job.title.toLowerCase()).to.include(searchTitle.toLowerCase());
+                  pm.expect(job.company_name.toLowerCase()).to.include(searchCompany.toLowerCase());
+              });
+          }
+      });
+    language: text/javascript
+order: 11000

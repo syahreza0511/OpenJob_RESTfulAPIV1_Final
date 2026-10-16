@@ -1,0 +1,19 @@
+$kind: http-request
+url: http://localhost:{{port}}/bookmarks
+method: GET
+headers:
+  Authorization: Bearer {{accessToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 200 status code', () => {
+          pm.expect(pm.response).to.have.status(200);
+      });
+
+      pm.test('response body should have correct property and value', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson.status).to.equal('success');
+          pm.expect(responseJson.data.bookmarks).to.be.an('array');
+      });
+    language: text/javascript
+order: 6000

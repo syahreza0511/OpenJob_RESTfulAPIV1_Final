@@ -1,0 +1,14 @@
+$kind: http-request
+url: http://localhost:{{port}}/applications
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: |-
+    {
+        "user_id": "{{userId}}",
+        "job_id": "{{applicationJobId}}",
+        "status": "pending"
+    }
+order: 2000

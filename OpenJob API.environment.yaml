@@ -1,0 +1,84 @@
+name: OpenJob API
+values:
+  - key: port
+    value: '3000'
+  - key: userId
+    value: ''
+  - key: companyId
+    value: ''
+  - key: categoryId
+    value: ''
+  - key: jobId
+    value: ''
+  - key: jobCompanyId
+    value: ''
+  - key: jobCategoryId
+    value: ''
+  - key: applicationJobId
+    value: ''
+  - key: applicationId
+    value: ''
+  - key: bookmarkId
+    value: ''
+  - key: badUserPayloads
+    value: ''
+  - key: currentBadUserPayload
+    value: ''
+  - key: badCompanyPayloads
+    value: ''
+  - key: currentBadCompanyPayload
+    value: ''
+  - key: badJobPayloads
+    value: ''
+  - key: currentBadJobPayload
+    value: ''
+  - key: badLoginPayloads
+    value: ''
+  - key: currentBadLoginPayload
+    value: ''
+  - key: accessTokenJohn
+    value: ''
+  - key: refreshTokenJohn
+    value: ''
+  - key: accessTokenJane
+    value: ''
+  - key: refreshTokenJane
+    value: ''
+  - key: profileAccessToken
+    value: ''
+  - key: profileRefreshToken
+    value: ''
+  - key: accessToken
+    value: ''
+  - key: refreshToken
+    value: ''
+  - key: currentBadCategoryPayload
+    value: ''
+  - key: badCategoryPayloads
+    value: ''
+  - key: documentsAccessToken
+    value: ''
+  - key: documentId
+    value: ''
+  - key: newApplicationId
+    value: ''
+  - key: newUserId
+    value: ''
+  - key: ownerUserId
+    value: ''
+  - key: applicantUserId
+    value: ''
+  - key: ownerAccessToken
+    value: ''
+  - key: ownerRefreshToken
+    value: ''
+  - key: applicantAccessToken
+    value: ''
+  - key: mqCompanyId
+    value: ''
+  - key: mqCategoryId
+    value: ''
+  - key: mqJobId
+    value: ''
+  - key: mqApplicationId
+    value: ''

@@ -1,0 +1,47 @@
+$kind: http-request
+url: http://localhost:{{port}}/companies
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: "{{currentBadCompanyPayload}}"
+scripts:
+  - type: beforeRequest
+    code: |-
+      let badCompanyPayloads = pm.environment.get('badCompanyPayloads');
+
+      if (!badCompanyPayloads || badCompanyPayloads.length === 0) {
+          badCompanyPayloads = [
+              {},
+              { name: 'Tech Corp' },
+              { name: 123, location: 'Jakarta' }
+          ]
+      }
+
+      const currentBadCompanyPayload = badCompanyPayloads.shift();
+      pm.environment.set('currentBadCompanyPayload', JSON.stringify(currentBadCompanyPayload));
+      pm.environment.set('badCompanyPayloads', badCompanyPayloads);
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 400 status code', () => {
+          pm.expect(pm.response).to.have.status(400);
+      });
+
+      pm.test('response body should have correct property and value', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson.status).to.equal('failed');
+          pm.expect(responseJson.message).to.be.a('string');
+      });
+
+      const repeatRequestUntilDatasetEmpty = () => {
+          const badCompanyPayloads = pm.environment.get('badCompanyPayloads');
+          if(badCompanyPayloads && badCompanyPayloads.length > 0) {
+              postman.setNextRequest('Add Company with Invalid Payload');
+          }
+      };
+
+      repeatRequestUntilDatasetEmpty();
+    language: text/javascript
+order: 5000

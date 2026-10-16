@@ -1,0 +1,37 @@
+$kind: http-request
+url: http://localhost:{{port}}/jobs
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: |-
+    {
+        "company_id": "{{jobCompanyId}}",
+        "category_id": "{{jobCategoryId}}",
+        "title": "Senior Backend Developer",
+        "description": "We are looking for experienced backend developer",
+        "job_type": "full-time",
+        "experience_level": "senior",
+        "location_type": "remote",
+        "location_city": "Jakarta",
+        "salary_min": 15000000,
+        "salary_max": 25000000,
+        "is_salary_visible": true,
+        "status": "open"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 201 status code', () => {
+          pm.expect(pm.response).to.have.status(201);
+      });
+
+      pm.test('response body should have correct property and value', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson.status).to.equal('success');
+          pm.expect(responseJson.data.id).to.be.a('string');
+          pm.environment.set('jobId', responseJson.data.id);
+      });
+    language: text/javascript
+order: 7000

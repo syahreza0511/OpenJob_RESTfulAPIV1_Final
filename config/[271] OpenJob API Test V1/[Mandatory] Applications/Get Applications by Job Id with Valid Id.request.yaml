@@ -1,0 +1,26 @@
+$kind: http-request
+url: http://localhost:{{port}}/applications/job/{{applicationJobId}}
+method: GET
+headers:
+  Authorization: Bearer {{accessToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 200 status code', () => {
+          pm.expect(pm.response).to.have.status(200);
+      });
+
+      pm.test('response body should have correct property and value', () => {
+          const responseJson = pm.response.json();
+          const jobId = pm.environment.get('applicationJobId');
+          pm.expect(responseJson.status).to.equal('success');
+          pm.expect(responseJson.data.applications).to.be.an('array');
+          
+          if (responseJson.data.applications.length > 0) {
+              responseJson.data.applications.forEach(app => {
+                  pm.expect(app.job_id).to.equal(jobId);
+              });
+          }
+      });
+    language: text/javascript
+order: 11000

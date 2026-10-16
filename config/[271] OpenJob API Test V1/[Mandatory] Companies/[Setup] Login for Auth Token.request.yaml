@@ -1,0 +1,18 @@
+$kind: http-request
+url: http://localhost:{{port}}/authentications
+method: POST
+body:
+  type: json
+  content: |-
+    {
+        "email": "john@example.com",
+        "password": "password123"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const responseJson = pm.response.json();
+      pm.environment.set('accessToken', responseJson.data.accessToken);
+      pm.environment.set('refreshToken', responseJson.data.refreshToken);
+    language: text/javascript
+order: 1000

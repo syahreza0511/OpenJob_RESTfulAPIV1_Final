@@ -1,0 +1,96 @@
+$kind: http-request
+url: http://localhost:{{port}}/authentications
+method: POST
+body:
+  type: json
+  content: "{{currentBadLoginPayload}}"
+scripts:
+  - type: beforeRequest
+    code: "let badLoginPayloads = pm.environment.get('badLoginPayloads');\r
+
+      \r
+
+      if (!badLoginPayloads | badLoginPayloads.length === 0) {\r
+
+      \    badLoginPayloads = [\r
+
+      \        {},\r
+
+      \        { email: true },\r
+
+      \        { email: 'dicoding@dicoding.com' },\r
+
+      \        { email: 'dicoding', password: true }\r
+
+      \    ];\r
+
+      }\r
+
+      \r
+
+      const currentBadLoginPayload = badLoginPayloads.shift();\r
+
+      pm.environment.set('currentBadLoginPayload', JSON.stringify(currentBadLoginPayload));\r
+
+      pm.environment.set('badLoginPayloads', badLoginPayloads);"
+    language: text/javascript
+  - type: afterResponse
+    code: "pm.test('it should response 400 status code', () => {\r
+
+      \    pm.expect(pm.response).to.have.status(400);\r
+
+      });\r
+
+      \r
+
+      pm.test('response Content-Type header should have application/json value', () => {\r
+
+      \    pm.expect(pm.response.headers.get('Content-Type')).to.includes('application/json');\r
+
+      }); \r
+
+      \r
+
+      pm.test('response body should an object', () => {\r
+
+      \    const responseJson = pm.response.json();\r
+
+      \    pm.expect(responseJson).to.be.an('object');\r
+
+      });\r
+
+      \r
+
+      pm.test('response body have correct property and value', () => {\r
+
+      \    const responseJson = pm.response.json();\r
+
+      \r
+
+      \    pm.expect(responseJson.status).to.equal('failed');\r
+
+      \    pm.expect(responseJson.message).to.be.a('string');\r
+
+      })\r
+
+      \r
+
+      const repeatRequestUntilDatasetEmpty = () => {\r
+
+      \    const badLoginPayloads = pm.environment.get('badLoginPayloads');\r
+
+      \ \r
+
+      \    if(badLoginPayloads && badLoginPayloads.length > 0) {\r
+
+      \        postman.setNextRequest('Login with Invalid Payload');\r
+
+      \    }\r
+
+      }\r
+
+      \ \r
+
+      repeatRequestUntilDatasetEmpty();"
+    language: text/javascript
+order: 3000

@@ -1,0 +1,32 @@
+$kind: http-request
+url: http://localhost:{{port}}/profile
+method: GET
+headers:
+  Authorization: Bearer {{profileAccessToken}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 200 status code', () => {
+          pm.expect(pm.response).to.have.status(200);
+      });
+
+      pm.test('response Content-Type header should have application/json value', () => {
+          pm.expect(pm.response.headers.get('Content-Type')).to.includes('application/json');
+      });
+
+      pm.test('response body should be an object', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson).to.be.an('object');
+      });
+
+      pm.test('response body should have correct property and value', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson.status).to.equal('success');
+          pm.expect(responseJson.data).to.be.an('object');
+          pm.expect(responseJson.data.id).to.be.a('string');
+          pm.expect(responseJson.data.name).to.equal('John Doe');
+          pm.expect(responseJson.data.email).to.equal('john@example.com');
+          pm.expect(responseJson.data.role).to.equal('user');
+      });
+    language: text/javascript
+order: 5000

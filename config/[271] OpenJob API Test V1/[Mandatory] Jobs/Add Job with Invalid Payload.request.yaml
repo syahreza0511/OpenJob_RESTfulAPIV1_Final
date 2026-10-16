@@ -1,0 +1,41 @@
+$kind: http-request
+url: http://localhost:{{port}}/jobs
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: "{{currentBadJobPayload}}"
+scripts:
+  - type: beforeRequest
+    code: |-
+      let badJobPayloads = pm.environment.get('badJobPayloads');
+
+      if (!badJobPayloads || badJobPayloads.length === 0) {
+          badJobPayloads = [
+              {},
+              { title: 'Backend Developer' },
+              { title: 'Backend Developer', company_id: 'xxx' }
+          ]
+      }
+
+      const currentBadJobPayload = badJobPayloads.shift();
+      pm.environment.set('currentBadJobPayload', JSON.stringify(currentBadJobPayload));
+      pm.environment.set('badJobPayloads', badJobPayloads);
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 400 status code', () => {
+          pm.expect(pm.response).to.have.status(400);
+      });
+
+      const repeatRequestUntilDatasetEmpty = () => {
+          const badJobPayloads = pm.environment.get('badJobPayloads');
+          if(badJobPayloads && badJobPayloads.length > 0) {
+              postman.setNextRequest('Add Job with Invalid Payload');
+          }
+      };
+
+      repeatRequestUntilDatasetEmpty();
+    language: text/javascript
+order: 6000

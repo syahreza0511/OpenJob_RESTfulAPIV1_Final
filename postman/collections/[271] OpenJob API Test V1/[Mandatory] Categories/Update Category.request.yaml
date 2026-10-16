@@ -1,0 +1,19 @@
+$kind: http-request
+url: http://localhost:{{port}}/categories/{{categoryId}}
+method: PUT
+headers:
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: |-
+    {
+        "name": "Software Development"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 200 status code', () => {
+          pm.expect(pm.response).to.have.status(200);
+      });
+    language: text/javascript
+order: 11000

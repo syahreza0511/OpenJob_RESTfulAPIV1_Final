@@ -1,0 +1,25 @@
+$kind: http-request
+url: http://localhost:{{port}}/jobs
+method: POST
+headers:
+  Authorization: Bearer {{accessToken}}
+body:
+  type: json
+  content: |-
+    {
+        "company_id": "{{jobCompanyId}}",
+        "category_id": "{{jobCategoryId}}",
+        "title": "Frontend Developer",
+        "description": "Frontend position",
+        "job_type": "full-time",
+        "experience_level": "mid",
+        "location_type": "onsite",
+        "status": "open"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const responseJson = pm.response.json();
+      pm.environment.set('applicationJobId', responseJson.data.id);
+    language: text/javascript
+order: 1000

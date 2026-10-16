@@ -1,0 +1,18 @@
+$kind: http-request
+url: http://localhost:{{port}}/companies
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('it should response 200 status code', () => {
+          pm.expect(pm.response).to.have.status(200);
+      });
+
+      pm.test('response body should have correct property and value', () => {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson.status).to.equal('success');
+          pm.expect(responseJson.data.companies).to.be.an('array');
+          pm.expect(responseJson.data.companies.length).to.be.at.least(1);
+      });
+    language: text/javascript
+order: 7000
